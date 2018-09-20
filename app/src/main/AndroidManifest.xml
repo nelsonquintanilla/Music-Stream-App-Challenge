@@ -2,8 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.applaudostudios.musicstreamappchallenge">
 
+    <!--Permission-->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!--Notification-->
     <application
         android:name=".Notification"
         android:allowBackup="true"
@@ -19,7 +21,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".ForegroundService"/>
+        <!--Service-->
+        <service android:name=".ForegroundService" />
+        <!--Broadcast Receiver-->
+        <receiver android:name=".NotificationReceiver" />
+
     </application>
 
 </manifest>

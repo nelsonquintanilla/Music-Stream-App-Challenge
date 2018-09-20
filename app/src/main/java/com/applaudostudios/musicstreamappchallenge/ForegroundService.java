@@ -56,7 +56,7 @@ public class ForegroundService extends Service {
         super.onDestroy();
     }
 
-    // Only needed for bound bound services (this case is a started service)
+    // Only needed for bound services (this case is a started service)
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {

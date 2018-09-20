@@ -22,6 +22,7 @@ public class Notification extends Application {
                     "Example Service Channel",
                     NotificationManager.IMPORTANCE_DEFAULT
             );
+
          NotificationManager manager = getSystemService(NotificationManager.class);
             if (manager != null) {
                 manager.createNotificationChannel(serviceChannel);

@@ -9,9 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private String url = null;
+    private String url;
     private ImageView playImageView;
-    private ImageView pauseImageView;
+    private boolean isPlaying;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,38 +22,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         url = textView.getText().toString();
 
         playImageView = findViewById(R.id.play_button_image);
-        pauseImageView = findViewById(R.id.pause_button_image);
+        isPlaying = false;
 
         playImageView.setOnClickListener(this);
-        pauseImageView.setOnClickListener(this);
-
-    }
-
-    public void startService() {
-        Intent serviceIntent = new Intent(this, ForegroundService.class);
-        serviceIntent.putExtra("inputExtra", url);
-
-        // To start your service while the app itself it is in the background
-        ContextCompat.startForegroundService(this, serviceIntent);
-    }
-
-    public void stopService() {
-        Intent serviceIntent = new Intent(this, ForegroundService.class);
-        stopService(serviceIntent);
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.play_button_image:
-                startService();
-                break;
-            case R.id.pause_button_image:
-                stopService();
-                break;
-            default:
-                break;
+        if (isPlaying) {
+            Intent pauseIntent = new Intent(MainActivity.this, ForegroundService.class);
+            pauseIntent.setAction(Constants.ACTION.PAUSE_ACTION);
+            ContextCompat.startForegroundService(this, pauseIntent);
+            playImageView.setImageResource(R.drawable.play_button_image);
+            isPlaying = false;
+        } else {
+            Intent playIntent = new Intent(MainActivity.this, ForegroundService.class);
+            playIntent.setAction(Constants.ACTION.PLAY_ACTION);
+            playIntent.putExtra("inputExtra", url);
+            ContextCompat.startForegroundService(this, playIntent);
+            playImageView.setImageResource(R.drawable.pause_button_image);
+            isPlaying = true;
         }
+    }
+
+    public void killService() {
+        Intent killIntent = new Intent(this, ForegroundService.class);
+        stopService(killIntent);
+    }
+
+    // Stops the service only if the activity is destroyed
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        killService();
     }
 
 

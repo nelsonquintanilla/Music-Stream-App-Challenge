@@ -6,7 +6,7 @@ import android.app.NotificationManager;
 import android.os.Build;
 
 public class Notification extends Application {
-    public static final String CHANNEL_ID = "exampleServiceChannel";
+    public static final String CHANNEL_ID = "ServiceChannel";
 
     @Override
     public void onCreate() {
@@ -15,11 +15,12 @@ public class Notification extends Application {
         createNotificationChannel();
     }
 
+    // Creates a notification channel only if our android version is Oreo or higher
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
-                    "Example Service Channel",
+                    "Service Channel",
                     NotificationManager.IMPORTANCE_DEFAULT
             );
 

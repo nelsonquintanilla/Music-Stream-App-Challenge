@@ -16,13 +16,23 @@ import java.io.IOException;
 import static com.applaudostudios.musicstreamappchallenge.Notification.CHANNEL_ID;
 
 public class ForegroundService extends Service implements MediaPlayer.OnPreparedListener {
-
     MediaPlayer mMediaPlayer = null;
+    boolean mark;
 
     // Called the first time the service is created
     @Override
     public void onCreate() {
         super.onCreate();
+        mMediaPlayer = new MediaPlayer();
+        String url = "http://us5.internet-radio.com:8110/listen.pls&t=.m3u";
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        // Because the file I am referencing might not exist.
+        try {
+            mMediaPlayer.setDataSource(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mark = true;
     }
 
     // Triggered when the service starts
@@ -31,23 +41,17 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
 
-            String input = intent.getStringExtra("inputExtra");
-
-            String url = "http://us5.internet-radio.com:8110/listen.pls&t=.m3u";
-            mMediaPlayer = new MediaPlayer();
-            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-            // Because the file I am referencing might not exist.
-            try {
-                mMediaPlayer.setDataSource(url);
-            } catch (IOException e) {
-                e.printStackTrace();
+            // The boolean variable 'mark' is to make sure the Media Player will prepare itself
+            // just the first time after it is created. After a call to the pause() method, it wont
+            // prepare itself again, instead it will call the start() method to resume.
+            if(mark){
+                mMediaPlayer.prepareAsync(); // prepare async to not block main thread
+                mMediaPlayer.setOnPreparedListener(this);
+            } else {
+                onPrepared(mMediaPlayer);
             }
 
-            mMediaPlayer.setOnPreparedListener(this);
-            mMediaPlayer.prepareAsync(); // prepare async to not block main thread
-
-
+            String input = intent.getStringExtra("inputExtra");
             Intent notificationIntent = new Intent(this, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(this,
                     0, notificationIntent, 0);
@@ -72,7 +76,8 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
             startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
 
         } else if (intent.getAction().equals(Constants.ACTION.PAUSE_ACTION)) {
-
+            mMediaPlayer.pause();
+            mark = false;
 
         }
         return START_NOT_STICKY;
@@ -91,7 +96,6 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
     public IBinder onBind(Intent intent) {
         return null;
     }
-
 
     @Override
     public void onPrepared(MediaPlayer mediaPlayer) {

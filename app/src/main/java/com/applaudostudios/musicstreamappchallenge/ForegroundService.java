@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -18,6 +19,9 @@ import static com.applaudostudios.musicstreamappchallenge.Notification.CHANNEL_I
 public class ForegroundService extends Service implements MediaPlayer.OnPreparedListener {
     MediaPlayer mMediaPlayer = null;
     boolean mark;
+
+    // Binder given to clients
+    private final IBinder mBinder = new LocalBinder();
 
     // Called the first time the service is created
     @Override
@@ -84,21 +88,33 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
 
     }
 
+    @Override
+    public void onPrepared(MediaPlayer mediaPlayer) {
+        mMediaPlayer.start();
+    }
+
+    /**
+     * Class used for the client Binder.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with IPC.
+     */
+    public class LocalBinder extends Binder {
+        ForegroundService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return ForegroundService.this;
+        }
+    }
+
+    // Needed for bound services (In this case, a started and bound service)
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
     // Called when the service stops
     @Override
     public void onDestroy() {
         super.onDestroy();
     }
 
-    // Only needed for bound services (this case is a started service)
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public void onPrepared(MediaPlayer mediaPlayer) {
-        mMediaPlayer.start();
-    }
 }

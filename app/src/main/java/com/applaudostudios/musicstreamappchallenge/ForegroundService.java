@@ -43,7 +43,7 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
     // Called every time startService is called in the service
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getAction().equals(Constants.ACTION.PLAY_ACTION)) {
+        if ((Constants.ACTION.PLAY_ACTION).equals(intent.getAction())) {
 
             // The boolean variable 'mark' is to make sure the Media Player will prepare itself
             // just the first time after it is created. After a call to the pause() method, it wont
@@ -79,7 +79,7 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
 
             startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
 
-        } else if (intent.getAction().equals(Constants.ACTION.PAUSE_ACTION)) {
+        } else if ((Constants.ACTION.PAUSE_ACTION).equals(intent.getAction())) {
             mMediaPlayer.pause();
             mark = false;
 
@@ -116,5 +116,7 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
     public void onDestroy() {
         super.onDestroy();
     }
+
+
 
 }

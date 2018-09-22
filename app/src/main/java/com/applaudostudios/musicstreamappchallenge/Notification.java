@@ -15,8 +15,12 @@ public class Notification extends Application {
         createNotificationChannel();
     }
 
-    // Creates a notification channel only if our android version is Oreo or higher
+    /**
+     * Creates a Notification channel, for OREO and higher.
+     */
     private void createNotificationChannel() {
+        // Notification channels are only available in OREO and higher.
+        // So, add a check on SDK version.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
@@ -24,7 +28,8 @@ public class Notification extends Application {
                     NotificationManager.IMPORTANCE_DEFAULT
             );
 
-         NotificationManager manager = getSystemService(NotificationManager.class);
+        // Create a notification manager object.
+        NotificationManager manager = getSystemService(NotificationManager.class);
             if (manager != null) {
                 manager.createNotificationChannel(serviceChannel);
             }

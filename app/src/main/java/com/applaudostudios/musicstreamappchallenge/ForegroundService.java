@@ -11,7 +11,6 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
-
 import java.io.IOException;
 
 import static com.applaudostudios.musicstreamappchallenge.Notification.CHANNEL_ID;
@@ -21,7 +20,7 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
     boolean mark;
 
     // Binder given to clients
-    private final IBinder mBinder = new LocalBinder();
+//    private final IBinder mBinder = new LocalBinder();
 
     // Called the first time the service is created
     @Override
@@ -61,10 +60,15 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
                     0, notificationIntent, 0);
 
             // DELETE THIS TOAST ----------
-            Intent broadcastIntent = new Intent(this, NotificationReceiver.class);
-            broadcastIntent.putExtra("toastmessage", input);
+//            Intent toastIntent = new Intent(this, NotificationReceiver.class);
+//            toastIntent.putExtra("toastmessage", input);
+//            PendingIntent actionIntent = PendingIntent.getBroadcast(this,
+//                    0, toastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Intent toastIntent = new Intent(Constants.ACTION.EXAMPLE_ACTION);
+            toastIntent.putExtra("toastmessage", input);
             PendingIntent actionIntent = PendingIntent.getBroadcast(this,
-                    0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    0, toastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             // Mandatory for notification in Android Oreo or higher
             android.app.Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -93,22 +97,23 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
         mMediaPlayer.start();
     }
 
-    /**
-     * Class used for the client Binder.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with IPC.
-     */
-    public class LocalBinder extends Binder {
-        ForegroundService getService() {
-            // Return this instance of LocalService so clients can call public methods
-            return ForegroundService.this;
-        }
-    }
+//    /**
+//     * Class used for the client Binder.  Because we know this service always
+//     * runs in the same process as its clients, we don't need to deal with IPC.
+//     */
+//    public class LocalBinder extends Binder {
+//        ForegroundService getService() {
+//            // Return this instance of LocalService so clients can call public methods
+//            return ForegroundService.this;
+//        }
+//    }
 
     // Needed for bound services (In this case, a started and bound service)
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return mBinder;
+//        return mBinder;
+        return null;
     }
 
     // Called when the service stops

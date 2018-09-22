@@ -23,9 +23,5 @@
         </activity>
         <!--Service-->
         <service android:name=".ForegroundService" />
-        <!--Broadcast Receiver-->
-        <receiver android:name=".NotificationReceiver" />
-
     </application>
-
 </manifest>

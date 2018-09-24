@@ -17,7 +17,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ForegroundService mService;
     private boolean mBound = false;
 
-
     // Indicates whether the requested service exists and whether the client is permitted access
     // to it.
     @Override
@@ -65,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.play_pause_button_image:
                 if (mIsPlaying) {
                     Intent pauseIntent = new Intent(MainActivity.this, ForegroundService.class);
@@ -90,9 +89,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-
-
-    /** Defines callbacks for service binding, passed to bindService() */
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
     private ServiceConnection mConnection = new ServiceConnection() {
 
         @Override
@@ -112,12 +111,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void switcher(boolean state) {
-        if(mService.state){
-            mPlayImageView.setImageResource(R.drawable.play_button_image);
-            mIsPlaying = false;
-        } else {
-            mPlayImageView.setImageResource(R.drawable.pause_button_image);
-            mIsPlaying = true;
+        if (mBound) {
+            if (mService.state) {
+                mPlayImageView.setImageResource(R.drawable.play_button_image);
+                mIsPlaying = false;
+            } else {
+                mPlayImageView.setImageResource(R.drawable.pause_button_image);
+                mIsPlaying = true;
+            }
         }
     }
 

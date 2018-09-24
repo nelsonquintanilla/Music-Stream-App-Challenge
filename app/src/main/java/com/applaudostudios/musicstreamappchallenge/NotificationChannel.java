@@ -27,8 +27,8 @@ public class NotificationChannel extends Application {
                     NotificationManager.IMPORTANCE_DEFAULT
             );
 
-        // Creates a notification manager object.
-        NotificationManager manager = getSystemService(NotificationManager.class);
+            // Creates a notification manager object.
+            NotificationManager manager = getSystemService(NotificationManager.class);
             if (manager != null) {
                 manager.createNotificationChannel(serviceChannel);
             }

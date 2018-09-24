@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import java.io.IOException;
+
 import static com.applaudostudios.musicstreamappchallenge.Constants.CHANNEL_ID.PRIMARY_CHANNEL_ID;
 
 public class ForegroundService extends Service implements MediaPlayer.OnPreparedListener {
@@ -22,7 +23,7 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
     private final IBinder mBinder = new LocalBinder();
     private StateSwitcher mStateSwitcher;
 
-    public void method(StateSwitcher stateSwitcher){
+    public void method(StateSwitcher stateSwitcher) {
         mStateSwitcher = stateSwitcher;
     }
 
@@ -63,7 +64,7 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
             // just the first time after it is created. After a call to the pause() method, it wont
             // prepare itself again, instead it will call the start() method (through the onPrepared()
             // method) to resume.
-            if(mark){
+            if (mark) {
                 mMediaPlayer.prepareAsync(); // prepare async to not block main thread
                 mMediaPlayer.setOnPreparedListener(this);
 
@@ -71,12 +72,12 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
                 PendingIntent pendingIntent = PendingIntent.getActivity(this,
                         0, notificationIntent, 0);
 
-                Intent playMusicIntent = new Intent(this , ForegroundService.class);
+                Intent playMusicIntent = new Intent(this, ForegroundService.class);
                 playMusicIntent.setAction(Constants.ACTION.ACTION_PLAY);
                 PendingIntent playMusicPendingIntent = PendingIntent.getService(this,
                         0, playMusicIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                Intent pauseMusicIntent = new Intent(this , ForegroundService.class);
+                Intent pauseMusicIntent = new Intent(this, ForegroundService.class);
                 pauseMusicIntent.setAction(Constants.ACTION.ACTION_PAUSE);
                 PendingIntent pauseMusicPendingIntent = PendingIntent.getService(this,
                         0, pauseMusicIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -127,7 +128,7 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
         super.onDestroy();
     }
 
-    public interface StateSwitcher{
+    public interface StateSwitcher {
         public void switcher(boolean state);
     }
 

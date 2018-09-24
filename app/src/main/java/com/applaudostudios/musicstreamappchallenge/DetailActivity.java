@@ -1,5 +1,6 @@
 package com.applaudostudios.musicstreamappchallenge;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -29,5 +30,17 @@ public class DetailActivity extends AppCompatActivity{
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public void killService() {
+        Intent killIntent = new Intent(this, ForegroundService.class);
+        stopService(killIntent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        killService();
+    }
+
 
 }

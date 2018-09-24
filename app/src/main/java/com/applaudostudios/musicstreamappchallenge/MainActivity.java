@@ -1,7 +1,11 @@
 package com.applaudostudios.musicstreamappchallenge;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,9 +15,28 @@ import android.widget.ImageView;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView playImageView;
     private ImageView mInfoImageView;
-    NotificationReceiver notificationReceiver = new NotificationReceiver();
+    private NotificationReceiver notificationReceiver = new NotificationReceiver();
     private boolean isPlaying;
+    private ForegroundService mService;
+    private boolean mBound = false;
 
+    // Indicates whether the requested service exists and whether the client is permitted access
+    // to it.
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Bind to LocalService
+        Intent intent = new Intent(this, ForegroundService.class);
+        // Flag: creates the service if it's not already alive.
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unbindService(mConnection);
+        mBound = false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,5 +98,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            ForegroundService.LocalBinder binder = (ForegroundService.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
+
+
 }

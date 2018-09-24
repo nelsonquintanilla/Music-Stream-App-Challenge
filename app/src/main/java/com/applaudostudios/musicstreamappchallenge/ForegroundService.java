@@ -2,6 +2,8 @@ package com.applaudostudios.musicstreamappchallenge;
 
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioManager;
@@ -10,6 +12,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
+
 import java.io.IOException;
 import static com.applaudostudios.musicstreamappchallenge.Constants.CHANNEL_ID.PRIMARY_CHANNEL_ID;
 
@@ -18,6 +22,17 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
     boolean mark;
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
+
+    /**
+     * Class used for the client Binder.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with IPC.
+     */
+    public class LocalBinder extends Binder {
+        ForegroundService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return ForegroundService.this;
+        }
+    }
 
     // Called the first time the service is created
     @Override
@@ -39,10 +54,15 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
 
-        Intent toastIntent = new Intent(Constants.ACTION.ACTION_EXAMPLE);
-        toastIntent.putExtra("toastmessage", getString(R.string.url));
-        PendingIntent actionIntent = PendingIntent.getBroadcast(this,
-                0, toastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent playMusicIntent = new Intent(this , ForegroundService.class);
+        playMusicIntent.setAction(Constants.ACTION.ACTION_PLAY);
+        PendingIntent playMusicPendingIntent = PendingIntent.getService(this,
+                0, playMusicIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent pauseMusicIntent = new Intent(this , ForegroundService.class);
+        pauseMusicIntent.setAction(Constants.ACTION.ACTION_PAUSE);
+        PendingIntent pauseMusicPendingIntent = PendingIntent.getService(this,
+                0, pauseMusicIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Mandatory for notification in Android Oreo or higher
         android.app.Notification notification = new NotificationCompat.Builder(this, PRIMARY_CHANNEL_ID)
@@ -51,12 +71,20 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
                 .setSmallIcon(R.drawable.ic_android)
                 .setColor(Color.BLUE)
                 .setContentIntent(pendingIntent)
-                .addAction(R.mipmap.ic_launcher, "Play", actionIntent)
-                .addAction(R.mipmap.ic_launcher, "Pause", actionIntent)
+                .addAction(R.mipmap.ic_launcher, "Play", playMusicPendingIntent)
+                .addAction(R.mipmap.ic_launcher, "Pause", pauseMusicPendingIntent)
                 .build();
 
         startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
     }
+
+//    public void playMusic(){
+//        mMediaPlayer.start();
+//    }
+//
+//    public void pauseMusic(){
+//        mMediaPlayer.pause();
+//    }
 
     // Triggered when the service starts
     // Called every time startService is called in the service
@@ -101,16 +129,6 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
         super.onDestroy();
     }
 
-    /**
-     * Class used for the client Binder.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with IPC.
-     */
-    public class LocalBinder extends Binder {
-        ForegroundService getService() {
-            // Return this instance of LocalService so clients can call public methods
-            return ForegroundService.this;
-        }
-    }
 
 
 }

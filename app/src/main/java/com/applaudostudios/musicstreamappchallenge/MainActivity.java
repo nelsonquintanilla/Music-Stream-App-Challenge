@@ -13,10 +13,9 @@ import android.view.View;
 import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private ImageView playImageView;
-    private ImageView mInfoImageView;
-    private NotificationReceiver notificationReceiver = new NotificationReceiver();
-    private boolean isPlaying;
+    private ImageView mPlayImageView;
+    private boolean mIsPlaying;
+//    private NotificationReceiver mNotificationReceiver = new NotificationReceiver();
     private ForegroundService mService;
     private boolean mBound = false;
 
@@ -43,17 +42,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        isPlaying = false;
-        playImageView = findViewById(R.id.play_pause_button_image);
-        playImageView.setOnClickListener(this);
+        mIsPlaying = false;
+        mPlayImageView = findViewById(R.id.play_pause_button_image);
+        mPlayImageView.setOnClickListener(this);
 
-        mInfoImageView = findViewById(R.id.information_button_image);
+        ImageView mInfoImageView = findViewById(R.id.information_button_image);
         mInfoImageView.setOnClickListener(this);
 
-        // Registering the receiver
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(Constants.ACTION.ACTION_EXAMPLE);
-        registerReceiver(notificationReceiver, filter);
+//        // Registering the receiver
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction(Constants.ACTION.ACTION_EXAMPLE);
+//        registerReceiver(mNotificationReceiver, filter);
     }
 
     public void killService() {
@@ -68,25 +67,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
         killService();
-        unregisterReceiver(notificationReceiver);
+//        unregisterReceiver(mNotificationReceiver);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.play_pause_button_image:
-                if (isPlaying) {
+                if (mIsPlaying) {
                     Intent pauseIntent = new Intent(MainActivity.this, ForegroundService.class);
                     pauseIntent.setAction(Constants.ACTION.ACTION_PAUSE);
                     ContextCompat.startForegroundService(this, pauseIntent);
-                    playImageView.setImageResource(R.drawable.play_button_image);
-                    isPlaying = false;
+                    mPlayImageView.setImageResource(R.drawable.play_button_image);
+                    mIsPlaying = false;
                 } else {
                     Intent playIntent = new Intent(MainActivity.this, ForegroundService.class);
                     playIntent.setAction(Constants.ACTION.ACTION_PLAY);
                     ContextCompat.startForegroundService(this, playIntent);
-                    playImageView.setImageResource(R.drawable.pause_button_image);
-                    isPlaying = true;
+                    mPlayImageView.setImageResource(R.drawable.pause_button_image);
+                    mIsPlaying = true;
                 }
                 break;
             case R.id.information_button_image:
@@ -97,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
+
 
     /** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection mConnection = new ServiceConnection() {

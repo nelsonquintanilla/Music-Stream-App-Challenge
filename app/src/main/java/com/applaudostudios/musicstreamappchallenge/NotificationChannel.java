@@ -1,13 +1,12 @@
 package com.applaudostudios.musicstreamappchallenge;
 
 import android.app.Application;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
 import static com.applaudostudios.musicstreamappchallenge.Constants.CHANNEL_ID.PRIMARY_CHANNEL_ID;
 
-public class Notification extends Application {
+public class NotificationChannel extends Application {
 
     @Override
     public void onCreate() {
@@ -22,7 +21,7 @@ public class Notification extends Application {
         // Notification channels are only available in OREO and higher.
         // So, add a check on SDK version.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel serviceChannel = new NotificationChannel(
+            android.app.NotificationChannel serviceChannel = new android.app.NotificationChannel(
                     PRIMARY_CHANNEL_ID,
                     "Service Channel",
                     NotificationManager.IMPORTANCE_DEFAULT

@@ -12,26 +12,25 @@ import android.support.v4.app.NotificationCompat;
 import java.io.IOException;
 import static com.applaudostudios.musicstreamappchallenge.Constants.CHANNEL_ID.PRIMARY_CHANNEL_ID;
 
-public class ForegroundService extends Service /*implements MediaPlayer.OnPreparedListener*/ {
+public class ForegroundService extends Service implements MediaPlayer.OnPreparedListener {
     MediaPlayer mMediaPlayer = null;
-//    boolean mark;
+    boolean mark;
 
     // Called the first time the service is created
     @Override
     public void onCreate() {
         super.onCreate();
 
-//        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer = MediaPlayer.create(this, R.raw.jazz_in_paris);
-//        String url = "http://us5.internet-radio.com:8110/listen.pls&t=.m3u";
-//        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-//        // Because the file I am referencing might not exist.
-//        try {
-//            mMediaPlayer.setDataSource(url);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        mark = true;
+        mMediaPlayer = new MediaPlayer();
+        String url = "http://us5.internet-radio.com:8110/listen.pls&t=.m3u";
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        // Because the file I am referencing might not exist.
+        try {
+            mMediaPlayer.setDataSource(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mark = true;
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
@@ -65,27 +64,26 @@ public class ForegroundService extends Service /*implements MediaPlayer.OnPrepar
             // The boolean variable 'mark' is to make sure the Media Player will prepare itself
             // just the first time after it is created. After a call to the pause() method, it wont
             // prepare itself again, instead it will call the start() method to resume.
-//            if(mark){
-//                mMediaPlayer.prepareAsync(); // prepare async to not block main thread
-//                mMediaPlayer.setOnPreparedListener(this);
-//            } else {
-//                onPrepared(mMediaPlayer);
-//            }
-            mMediaPlayer.start();
+            if(mark){
+                mMediaPlayer.prepareAsync(); // prepare async to not block main thread
+                mMediaPlayer.setOnPreparedListener(this);
+            } else {
+                onPrepared(mMediaPlayer);
+            }
 
         } else if ((Constants.ACTION.ACTION_PAUSE).equals(intent.getAction())) {
             mMediaPlayer.pause();
-//            mark = false;
+            mark = false;
 
         }
         return START_NOT_STICKY;
 
     }
 
-//    @Override
-//    public void onPrepared(MediaPlayer mediaPlayer) {
-//        mMediaPlayer.start();
-//    }
+    @Override
+    public void onPrepared(MediaPlayer mediaPlayer) {
+        mMediaPlayer.start();
+    }
 
     // Needed for bound services (In this case, a started and bound service)
     @Nullable

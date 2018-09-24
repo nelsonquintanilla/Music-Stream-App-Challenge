@@ -1,27 +1,20 @@
 package com.applaudostudios.musicstreamappchallenge;
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.os.IBinder;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private String url;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, Parcelable {
     private ImageView playImageView;
-    private boolean isPlaying;
-
+    private ImageView mInfoImageView;
     NotificationReceiver notificationReceiver = new NotificationReceiver();
-
-//    ForegroundService mService;
-//    boolean mBound = false;
+    private boolean isPlaying;
 
 
     @Override
@@ -29,82 +22,105 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView textView = findViewById(R.id.url_text_view);
-        url = textView.getText().toString();
-
-        playImageView = findViewById(R.id.play_button_image);
         isPlaying = false;
-
+        playImageView = findViewById(R.id.play_pause_button_image);
         playImageView.setOnClickListener(this);
 
+        mInfoImageView = findViewById(R.id.information_button_image);
+        mInfoImageView.setOnClickListener(this);
+
+        // Registering the receiver
         IntentFilter filter = new IntentFilter();
-        filter.addAction(Constants.ACTION.EXAMPLE_ACTION);
+        filter.addAction(Constants.ACTION.ACTION_EXAMPLE);
         registerReceiver(notificationReceiver, filter);
     }
-
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        // Bind to LocalService
-//        Intent intent = new Intent(this, ForegroundService.class);
-//        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-//    }
-
-    @Override
-    public void onClick(View view) {
-        if (isPlaying) {
-            Intent pauseIntent = new Intent(MainActivity.this, ForegroundService.class);
-            pauseIntent.setAction(Constants.ACTION.PAUSE_ACTION);
-            ContextCompat.startForegroundService(this, pauseIntent);
-            playImageView.setImageResource(R.drawable.play_button_image);
-            isPlaying = false;
-        } else {
-            Intent playIntent = new Intent(MainActivity.this, ForegroundService.class);
-            playIntent.setAction(Constants.ACTION.PLAY_ACTION);
-            playIntent.putExtra("inputExtra", url);
-            ContextCompat.startForegroundService(this, playIntent);
-            playImageView.setImageResource(R.drawable.pause_button_image);
-            isPlaying = true;
-        }
-    }
-
-//    /** Defines callbacks for service binding, passed to bindService() */
-//    private ServiceConnection mConnection = new ServiceConnection() {
-//
-//        @Override
-//        public void onServiceConnected(ComponentName className,
-//                                       IBinder service) {
-//            // We've bound to LocalService, cast the IBinder and get LocalService instance
-//            ForegroundService.LocalBinder binder = (ForegroundService.LocalBinder) service;
-//            mService = binder.getService();
-//            mBound = true;
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName arg0) {
-//            mBound = false;
-//        }
-//    };
 
     public void killService() {
         Intent killIntent = new Intent(this, ForegroundService.class);
         stopService(killIntent);
     }
 
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        unbindService(mConnection);
-//        mBound = false;
-//    }
-
-    // Stops the service only if the activity is destroyed
+    /**
+     * Unregisters the receiver and stops the service when the app is being destroyed.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
         killService();
         unregisterReceiver(notificationReceiver);
     }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.play_pause_button_image:
+                if (isPlaying) {
+                    Intent pauseIntent = new Intent(MainActivity.this, ForegroundService.class);
+                    pauseIntent.setAction(Constants.ACTION.ACTION_PAUSE);
+                    ContextCompat.startForegroundService(this, pauseIntent);
+                    playImageView.setImageResource(R.drawable.play_button_image);
+                    isPlaying = false;
+                } else {
+                    Intent playIntent = new Intent(MainActivity.this, ForegroundService.class);
+                    playIntent.setAction(Constants.ACTION.ACTION_PLAY);
+                    ContextCompat.startForegroundService(this, playIntent);
+                    playImageView.setImageResource(R.drawable.pause_button_image);
+                    isPlaying = true;
+                }
+                break;
+            case R.id.information_button_image:
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                MainActivity.this.startActivity(intent);
+                break;
+            default:
+                break;
+        }
+    }
+
+//    @Override
+//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//        // Always call the superclass so it can restore the view hierarchy
+//        super.onRestoreInstanceState(savedInstanceState);
+//        // Restore state members from saved instance
+//        isPlaying = savedInstanceState.getBoolean("BOOLEAN_KEY");
+//    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("BOOLEAN_KEY", isPlaying);
+        // call superclass to save any view hierarchy
+        super.onSaveInstanceState(outState);
+    }
+
+    // Parcelable generated methods.
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeByte(this.isPlaying ? (byte) 1 : (byte) 0);
+    }
+
+    public MainActivity() {
+    }
+
+    protected MainActivity(Parcel in) {
+        this.isPlaying = in.readByte() != 0;
+    }
+
+    public static final Parcelable.Creator<MainActivity> CREATOR = new Parcelable.Creator<MainActivity>() {
+        @Override
+        public MainActivity createFromParcel(Parcel source) {
+            return new MainActivity(source);
+        }
+
+        @Override
+        public MainActivity[] newArray(int size) {
+            return new MainActivity[size];
+        }
+    };
 
 
 

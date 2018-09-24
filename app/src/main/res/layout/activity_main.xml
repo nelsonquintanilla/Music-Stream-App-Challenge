@@ -15,16 +15,17 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:src="@drawable/musical_note"
-        app:layout_constraintBottom_toTopOf="@+id/play_button_image"
-        app:layout_constraintEnd_toEndOf="@+id/play_button_image"
+        app:layout_constraintBottom_toTopOf="@+id/play_pause_button_image"
+        app:layout_constraintEnd_toEndOf="@+id/play_pause_button_image"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/play_button_image"
+        app:layout_constraintStart_toStartOf="@+id/play_pause_button_image"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        app:layout_constraintVertical_chainStyle="spread" />
+        app:layout_constraintVertical_chainStyle="spread"
+        android:contentDescription="@string/background_image" />
 
     <ImageView
-        android:id="@+id/play_button_image"
+        android:id="@+id/play_pause_button_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginEnd="8dp"
@@ -34,7 +35,23 @@
         app:layout_constraintEnd_toEndOf="@+id/url_text_view"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/url_text_view"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        android:contentDescription="@string/play_pause_button" />
+
+    <ImageView
+        android:id="@+id/information_button_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:src="@mipmap/ic_launcher"
+        app:layout_constraintBottom_toTopOf="@+id/url_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/play_pause_button_image"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        android:contentDescription="@string/information_button" />
 
     <TextView
         android:id="@+id/url_text_view"
@@ -43,7 +60,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:text="http://us5.internet-radio.com:8110/listen.pls&amp;t=.m3u"
+        android:text="@string/url"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

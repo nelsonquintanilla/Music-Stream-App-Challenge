@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">MusicStreamAppChallenge</string>
+    <string name="url"><![CDATA[http://us5.internet-radio.com:8110/listen.pls&t=.m3u]]></string>
+    <string name="background_image">background_image</string>
+    <string name="play_pause_button">play_pause_button</string>
+    <string name="information_button">information_button</string>
+    <string name="radio_name_string">Radio Name</string>
+    <string name="information_string">Radio Information: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut vitae augue non quam dictum fringilla. Fusce vehicula blandit tortor. Nulla a velit auctor, placerat ex vistibulum, porta dolor.</string>
 </resources>

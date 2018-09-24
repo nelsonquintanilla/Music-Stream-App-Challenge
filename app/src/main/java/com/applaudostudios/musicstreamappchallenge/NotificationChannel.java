@@ -1,4 +1,4 @@
-package com.applaudostudios.musicstreamappchallenge;
+package com.applaudostudios.musicstreamappchallenge.service;
 
 import android.app.Application;
 import android.app.NotificationManager;

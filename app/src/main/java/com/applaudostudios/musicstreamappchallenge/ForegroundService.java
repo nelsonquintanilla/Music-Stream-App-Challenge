@@ -1,4 +1,4 @@
-package com.applaudostudios.musicstreamappchallenge;
+package com.applaudostudios.musicstreamappchallenge.service;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -10,6 +10,10 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+
+import com.applaudostudios.musicstreamappchallenge.Constants;
+import com.applaudostudios.musicstreamappchallenge.MainActivity;
+import com.applaudostudios.musicstreamappchallenge.R;
 
 import java.io.IOException;
 

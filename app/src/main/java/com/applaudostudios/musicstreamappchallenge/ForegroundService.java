@@ -20,8 +20,16 @@ import static com.applaudostudios.musicstreamappchallenge.Constants.CHANNEL_ID.P
 public class ForegroundService extends Service implements MediaPlayer.OnPreparedListener {
     MediaPlayer mMediaPlayer = null;
     boolean mark;
+    boolean state;
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
+    private StateSwitcher mStateSwitcher;
+
+    public void method(StateSwitcher stateSwitcher){
+        mStateSwitcher = stateSwitcher;
+    }
+
+
 
     /**
      * Class used for the client Binder.  Because we know this service always
@@ -78,14 +86,6 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
         startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
     }
 
-//    public void playMusic(){
-//        mMediaPlayer.start();
-//    }
-//
-//    public void pauseMusic(){
-//        mMediaPlayer.pause();
-//    }
-
     // Triggered when the service starts
     // Called every time startService is called in the service
     @Override
@@ -98,13 +98,19 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
             if(mark){
                 mMediaPlayer.prepareAsync(); // prepare async to not block main thread
                 mMediaPlayer.setOnPreparedListener(this);
+
             } else {
                 onPrepared(mMediaPlayer);
+                state = false;
+                mStateSwitcher.switcher(state);
             }
 
         } else if ((Constants.ACTION.ACTION_PAUSE).equals(intent.getAction())) {
             mMediaPlayer.pause();
             mark = false;
+            state = true;
+            mStateSwitcher.switcher(state);
+
 
         }
         return START_NOT_STICKY;
@@ -129,6 +135,9 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
         super.onDestroy();
     }
 
+    public static interface StateSwitcher{
+        public void switcher(boolean state);
+    }
 
 
 }

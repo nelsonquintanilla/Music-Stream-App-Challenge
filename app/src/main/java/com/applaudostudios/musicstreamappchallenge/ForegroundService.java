@@ -10,14 +10,15 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+
 import java.io.IOException;
 
 import static com.applaudostudios.musicstreamappchallenge.Constants.CHANNEL_ID.PRIMARY_CHANNEL_ID;
 
 public class ForegroundService extends Service implements MediaPlayer.OnPreparedListener {
     MediaPlayer mMediaPlayer = null;
-    boolean mark;
-    boolean state;
+    boolean mMark;
+    boolean mState;
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
     private StateSwitcher mStateSwitcher;
@@ -50,7 +51,7 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
         } catch (IOException e) {
             e.printStackTrace();
         }
-        mark = true;
+        mMark = true;
     }
 
     // Triggered when the service starts
@@ -59,11 +60,11 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
     public int onStartCommand(Intent intent, int flags, int startId) {
         if ((Constants.ACTION.ACTION_PLAY).equals(intent.getAction())) {
 
-            // The boolean variable 'mark' is to make sure the Media Player will prepare itself
+            // The boolean variable 'mMark' is to make sure the Media Player will prepare itself
             // just the first time after it is created. After a call to the pause() method, it wont
             // prepare itself again, instead it will call the start() method (through the onPrepared()
             // method) to resume.
-            if (mark) {
+            if (mMark) {
                 mMediaPlayer.prepareAsync(); // prepare async to not block main thread
                 mMediaPlayer.setOnPreparedListener(this);
 
@@ -96,14 +97,14 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
 
             } else {
                 onPrepared(mMediaPlayer);
-                state = false;
+                mState = false;
                 mStateSwitcher.switcher(false);
             }
 
         } else if ((Constants.ACTION.ACTION_PAUSE).equals(intent.getAction())) {
             mMediaPlayer.pause();
-            mark = false;
-            state = true;
+            mMark = false;
+            mState = true;
             mStateSwitcher.switcher(true);
         }
         return START_NOT_STICKY;

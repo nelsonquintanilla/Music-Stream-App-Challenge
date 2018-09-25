@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.play_pause_button_image:
                 if (mIsPlaying) {
-                    Intent pauseIntent = new Intent(MainActivity.this,ForegroundService.class);
+                    Intent pauseIntent = new Intent(MainActivity.this, ForegroundService.class);
                     pauseIntent.setAction(Constants.ACTION.ACTION_PAUSE);
                     ContextCompat.startForegroundService(this, pauseIntent);
                     mPlayImageView.setImageResource(R.drawable.play_button_image);
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void switcher(boolean state) {
-        if (mService.state) {
+        if (mService.mState) {
             mPlayImageView.setImageResource(R.drawable.play_button_image);
             mIsPlaying = false;
         } else {

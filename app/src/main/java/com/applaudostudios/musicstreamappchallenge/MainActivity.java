@@ -61,7 +61,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Unregisters the receiver and stops the service when the app is being destroyed.
+     * Unregisters the receiver and stops the service when the app is being destroyed. This is the
+     * only to kill the service: destroying the main activity.
      */
     @Override
     protected void onDestroy() {

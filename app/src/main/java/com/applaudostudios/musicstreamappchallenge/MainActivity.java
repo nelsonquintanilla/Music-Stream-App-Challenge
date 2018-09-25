@@ -15,7 +15,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView mPlayImageView;
     private boolean mIsPlaying;
     private ForegroundService mService;
-    private boolean mBound = false;
 
     // Indicates whether the requested service exists and whether the client is permitted access
     // to it.
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStop() {
         super.onStop();
         unbindService(mConnection);
-        mBound = false;
+
     }
 
     @Override
@@ -67,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.play_pause_button_image:
                 if (mIsPlaying) {
-                    Intent pauseIntent = new Intent(MainActivity.this, ForegroundService.class);
+                    Intent pauseIntent = new Intent(MainActivity.this,ForegroundService.class);
                     pauseIntent.setAction(Constants.ACTION.ACTION_PAUSE);
                     ContextCompat.startForegroundService(this, pauseIntent);
                     mPlayImageView.setImageResource(R.drawable.play_button_image);
@@ -97,28 +96,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
-            ForegroundService.LocalBinder binder = (ForegroundService.LocalBinder) service;
-            mService = binder.getService();
+            ForegroundService.LocalBinder myBinder = (ForegroundService.LocalBinder) service;
+            mService = myBinder.getService();
             mService.method(MainActivity.this);
-            mBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            mBound = false;
+            mService = null;
         }
     };
 
     @Override
     public void switcher(boolean state) {
-        if (mBound) {
-            if (mService.state) {
-                mPlayImageView.setImageResource(R.drawable.play_button_image);
-                mIsPlaying = false;
-            } else {
-                mPlayImageView.setImageResource(R.drawable.pause_button_image);
-                mIsPlaying = true;
-            }
+        if (mService.state) {
+            mPlayImageView.setImageResource(R.drawable.play_button_image);
+            mIsPlaying = false;
+        } else {
+            mPlayImageView.setImageResource(R.drawable.pause_button_image);
+            mIsPlaying = true;
         }
     }
 

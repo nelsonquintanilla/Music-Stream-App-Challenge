@@ -1,4 +1,4 @@
-package com.applaudostudios.musicstreamappchallenge.service;
+package com.applaudostudios.musicstreamappchallenge;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -10,11 +10,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-
-import com.applaudostudios.musicstreamappchallenge.Constants;
-import com.applaudostudios.musicstreamappchallenge.MainActivity;
-import com.applaudostudios.musicstreamappchallenge.R;
-
 import java.io.IOException;
 
 import static com.applaudostudios.musicstreamappchallenge.Constants.CHANNEL_ID.PRIMARY_CHANNEL_ID;
@@ -133,7 +128,7 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
     }
 
     public interface StateSwitcher {
-        public void switcher(boolean state);
+        void switcher(boolean state);
     }
 
 }

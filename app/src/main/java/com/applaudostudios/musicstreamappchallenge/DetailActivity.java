@@ -31,15 +31,4 @@ public class DetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void killService() {
-        Intent killIntent = new Intent(this, ForegroundService.class);
-        stopService(killIntent);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        killService();
-    }
-
 }

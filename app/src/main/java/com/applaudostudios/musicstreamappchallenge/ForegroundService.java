@@ -126,6 +126,8 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mMediaPlayer.release();
+        mMediaPlayer = null;
     }
 
     public interface StateSwitcher {

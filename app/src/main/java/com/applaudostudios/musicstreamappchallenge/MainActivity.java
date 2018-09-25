@@ -16,8 +16,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean mIsPlaying;
     private ForegroundService mService;
 
-    // Indicates whether the requested service exists and whether the client is permitted access
-    // to it.
+    /**
+     * Indicates whether the requested service exists and whether the client is permitted access
+     * to it.
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -26,11 +28,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
+    /**
+     * Unbinds the service when the main activity goes to background.
+     */
     @Override
     protected void onStop() {
         super.onStop();
         unbindService(mConnection);
-
     }
 
     @Override
@@ -38,6 +42,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // When the app is launched, it has set mIsPlaying to false so it can follow the correct
+        // logic in the onClick method below. It also has the mPlayImageView variable set to the
+        // play_button_image resource.
         mIsPlaying = false;
         mPlayImageView = findViewById(R.id.play_pause_button_image);
         mPlayImageView.setOnClickListener(this);
@@ -47,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mInfoImageView.setOnClickListener(this);
     }
 
+    // This method is called in the onDestroy method below to stop the service.
     public void killService() {
         Intent killIntent = new Intent(this, ForegroundService.class);
         stopService(killIntent);
@@ -61,6 +69,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         killService();
     }
 
+    /**
+     * Controls the state change of the play_pause button and sends the correct action within the
+     * intent when it's passed in to the service.
+     *
+     * @param view either the play/pause button or the information button.
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -107,6 +121,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
+    /**
+     * Method of the interface StateSwitcher implemented in this class.
+     * @param state either true or false
+     */
     @Override
     public void switcher(boolean state) {
         if (mService.mState) {

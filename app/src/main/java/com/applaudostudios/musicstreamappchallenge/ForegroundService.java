@@ -17,8 +17,12 @@ import static com.applaudostudios.musicstreamappchallenge.Constants.CHANNEL_ID.P
 
 public class ForegroundService extends Service implements MediaPlayer.OnPreparedListener {
     MediaPlayer mMediaPlayer = null;
+    // Boolean that it's set to true only when the service is created, then in the onStartCommand
+    // method it will prepare the media player and create/starts the notification just the first time
+    // the user hits play.
     boolean mMark;
     boolean mState;
+
     // Binder given to clients
     private final IBinder mBinder = new LocalBinder();
     private StateSwitcher mStateSwitcher;
@@ -42,6 +46,7 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
     @Override
     public void onCreate() {
         super.onCreate();
+        // Declaring and initializing the media player.
         mMediaPlayer = new MediaPlayer();
         String url = "http://us5.internet-radio.com:8110/listen.pls&t=.m3u";
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -68,15 +73,20 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
                 mMediaPlayer.prepareAsync(); // prepare async to not block main thread
                 mMediaPlayer.setOnPreparedListener(this);
 
+                // Intent for go back to the activity when we touch the notification.
                 Intent notificationIntent = new Intent(this, MainActivity.class);
                 PendingIntent pendingIntent = PendingIntent.getActivity(this,
                         0, notificationIntent, 0);
 
+                // Intent passed in to the pending intent that is assigned to the play button in
+                // the notification.
                 Intent playMusicIntent = new Intent(this, ForegroundService.class);
                 playMusicIntent.setAction(Constants.ACTION.ACTION_PLAY);
                 PendingIntent playMusicPendingIntent = PendingIntent.getService(this,
                         0, playMusicIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+                // Intent passed in to the pending intent that is assigned to the pause button in
+                // the notification.
                 Intent pauseMusicIntent = new Intent(this, ForegroundService.class);
                 pauseMusicIntent.setAction(Constants.ACTION.ACTION_PAUSE);
                 PendingIntent pauseMusicPendingIntent = PendingIntent.getService(this,
@@ -98,6 +108,7 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
             } else {
                 onPrepared(mMediaPlayer);
                 mState = false;
+                // Using the method of the interface implemented in the main activity.
                 mStateSwitcher.switcher(false);
             }
 
@@ -105,6 +116,7 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
             mMediaPlayer.pause();
             mMark = false;
             mState = true;
+            // Using the method of the interface implemented in the main activity.
             mStateSwitcher.switcher(true);
         }
         return START_NOT_STICKY;
@@ -115,14 +127,14 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
         mMediaPlayer.start();
     }
 
-    // Needed for bound services (In this case, a started and bound service)
+    // Needed for bound services (In this case, a started and bound service).
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
 
-    // Called when the service stops
+    // Called when the service stops to release an nullify the media player.
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -130,6 +142,10 @@ public class ForegroundService extends Service implements MediaPlayer.OnPrepared
         mMediaPlayer = null;
     }
 
+    /**
+     * Interface that it's used to update the play/pause button when we play/pause from the
+     * notification buttons.
+     */
     public interface StateSwitcher {
         void switcher(boolean state);
     }
